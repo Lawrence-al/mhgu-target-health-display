@@ -1,0 +1,18 @@
+[package]
+name = "mhgu-target-health-display"
+version = "0.4.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+test = false
+doctest = false
+bench = false
+
+[dependencies]
+mhgu-forge = { git = "https://github.com/Lawrence-al/forge-rs.git", rev = "f2af0622a2a0aa291ffbd3d2f7628c0e2d96d220", default-features = false, features = ["imgui", "mt"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = "s"

@@ -1,0 +1,9 @@
+# 构建校验需要的 Forge 入口。
+init
+fini
+forge_onLoad
+forge_onInit
+forge_onImGuiInit
+forge_onUpdate
+forge_onImGuiRender
+forge_onImGuiFreeRender

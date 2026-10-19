@@ -1,0 +1,12 @@
+{
+  "font": "romfs/nativeNX/forge/fonts/NotoSansSC-Medium.otf",
+  "source": "https://github.com/notofonts/noto-cjk/blob/main/Sans/SubsetOTF/SC/NotoSansSC-Medium.otf",
+  "download": "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/SubsetOTF/SC/NotoSansSC-Medium.otf",
+  "git_blob_sha1": "fafdfebf3103db4dc81d33ebd55b6786e08c9ebe",
+  "sha256": "7633f5a016d4dd95e685a69633d818aabc4644c4b08e26bd35b1b30c45ed5dda",
+  "bytes": 8345436,
+  "modified": false,
+  "license": "SIL Open Font License 1.1",
+  "license_file": "licenses/NotoSansSC-LICENSE.txt",
+  "license_sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2"
+}

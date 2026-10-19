@@ -1,0 +1,13 @@
+[build]
+target = "armv7a-none-eabi.json"
+
+[unstable]
+build-std = ["core", "alloc"]
+build-std-features = ["compiler-builtins-mem"]
+json-target-spec = true
+
+[target.armv7a-none-eabi]
+rustflags = [
+    "-C", "link-arg=-Tlink/switch32.ld",
+    "-C", "link-arg=-Wl,--build-id=sha1",
+]
