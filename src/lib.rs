@@ -120,6 +120,10 @@ unsafe fn selected_health(base: u32, config: &Config) -> Option<Snapshot> {
         return None;
     }
     let monster = unsafe { selected(manager) };
+    let id = unsafe { read_u16(monster + MONSTER_ID) } as u32;
+if id == 50 || id == 0x32 || id == 59 || id == 0x3B || id > 137 {
+    return None;
+}
     let work = unsafe { read_u32(monster + MONSTER_WORK) };
     let health = Health::new(unsafe { read_u32(work + CURRENT_HP) } as i32, unsafe {
         read_u32(work + MAXIMUM_HP)
