@@ -158,7 +158,6 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
     let enraged: unsafe extern "C" fn(u32) -> u32 = unsafe { mem::transmute(base + IS_ENRAGED) };
     let names = unsafe { read_u32(base + NAME_MANAGER) };
     
-    // 1. 精準攔截名字
     let name = if id == 0x47 {
         Text::from_str("黑蝕龙")
     } else if id == 0x7A {
@@ -180,7 +179,6 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
     let canonical_id = unsafe { normalize(read_u32(base + UI_MANAGER), id, 0) };
     let mut species = Text::from_str("Unknown");
 
-    // 2. 精準攔截種族迴圈，防止黑蝕龍引發 Panic 閃退
     if id == 0x47 || id == 0x7A {
         species = Text::from_str("???");
     } else {
@@ -202,7 +200,6 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
         }
     }
 
-    // 3. 放行所有真實數據讀取邏輯（發怒、體型、大小金冠復活！）
     let scale = f32::from_bits(unsafe { read_u32(work + MONSTER_SCALE) });
     let mut size = SizeCrown {
         crown: 0xFF,
