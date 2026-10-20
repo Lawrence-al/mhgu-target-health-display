@@ -163,7 +163,7 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
     let names = unsafe { read_u32(base + NAME_MANAGER) };
 if id == 0x47 || id == 0x7A || id > 137 {
     return MonsterInfo {
-        name: Text::from_str("黑蚀龙"),
+        name: Text::from_str("黑蝕龙"),
         species: Text::from_str("古龙种"), 
         scale: 1.0,
         size_cm: 0.0,
