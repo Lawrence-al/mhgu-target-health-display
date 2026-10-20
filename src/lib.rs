@@ -174,6 +174,7 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
     };
     let canonical_id = unsafe { normalize(read_u32(base + UI_MANAGER), id, 0) };
     let mut species = Text::from_str("Unknown");
+    let mut species = Text::from_str("Unknown");
 if id == 0x47 || id == 0x7A {
     species = Text::from_str("???");
 } else {
