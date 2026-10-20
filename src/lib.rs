@@ -161,16 +161,6 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
         unsafe { mem::transmute(base + SIZE_AND_CROWN) };
     let enraged: unsafe extern "C" fn(u32) -> u32 = unsafe { mem::transmute(base + IS_ENRAGED) };
     let names = unsafe { read_u32(base + NAME_MANAGER) };
-if id == 0x47 || id == 0x7A || id > 137 {
-    return MonsterInfo {
-        name: Text::from_str("黑蝕龙"),
-        species: Text::from_str("古龙种"), 
-        scale: 1.0,
-        size_cm: 0.0,
-        crown: 0xFF,
-        enraged: false,
-    };
-}
     let index = unsafe { name_index(id) };
     // 文本在任务期间由游戏消息资源持有，立即复制成自有 UTF-8，绘图不保存游戏地址。
     let name = if index < MONSTER_NAME_COUNT {
@@ -184,25 +174,13 @@ if id == 0x47 || id == 0x7A || id > 137 {
     };
     let canonical_id = unsafe { normalize(read_u32(base + UI_MANAGER), id, 0) };
     let mut species = Text::from_str("Unknown");
+if id == 0x47 || id == 0x7A {
+    species = Text::from_str("???");
+} else {
     for record in 0..SPECIES_RECORD_COUNT {
-        let entry = base + SPECIES_RECORDS + record * 16;
-        if unsafe { read_u16(entry + 4) } as u32 == canonical_id {
-            let category = unsafe { read_u8(entry + 6) } as u32;
-            let (resource, key) = if category == 14 {
-                (17, 9)
-            } else {
-                (
-                    3,
-                    unsafe { read_u16(base + SPECIES_MESSAGES + category * 2) } as u32,
-                )
-            };
-            species = Text::from_str(
-                unsafe { CStr::from_ptr(message(names, resource, key)) }
-                    .to_str()
-                    .unwrap_or("Unknown"),
-            );
-            break;
-        }
+        break;
+    }
+}
     }
     let scale = f32::from_bits(unsafe { read_u32(work + MONSTER_SCALE) });
     let mut size = SizeCrown {
