@@ -161,8 +161,8 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
         unsafe { mem::transmute(base + SIZE_AND_CROWN) };
     let enraged: unsafe extern "C" fn(u32) -> u32 = unsafe { mem::transmute(base + IS_ENRAGED) };
     let names = unsafe { read_u32(base + NAME_MANAGER) };
-    if id == 50 || id == 0x32 || id > 137 {
-    return MonsterInfo::EMPTY;
+if id == 50 || id == 0x32 || id == 59 || id == 0x3B || id > 137 {
+    return None;
 }
     let index = unsafe { name_index(id) };
     // 文本在任务期间由游戏消息资源持有，立即复制成自有 UTF-8，绘图不保存游戏地址。
