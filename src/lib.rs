@@ -204,7 +204,6 @@ if id == 0x47 || id == 0x7A {
         crown: size.crown,
         enraged: unsafe { enraged(monster) } == 1,
     }
-}
 
 #[forge::imgui_free_render]
 fn draw_health() {
