@@ -159,9 +159,9 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
     let names = unsafe { read_u32(base + NAME_MANAGER) };
     
     let name = if id == 0x47 {
-        Text::from_str("黑蝕龙")
+        Text::from_str("黑蚀龙")
     } else if id == 0x7A {
-        Text::from_str("浑沌黑蝕龙")
+        Text::from_str("混沌黑蚀龙")
     } else {
         let index = unsafe { name_index(id) };
         if index < MONSTER_NAME_COUNT {
