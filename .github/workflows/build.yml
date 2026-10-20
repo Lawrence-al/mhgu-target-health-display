@@ -1,0 +1,28 @@
+yaml
+name: Build Switch Plugin
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: aarch64-unknown-none
+
+    - name: Build plugin
+      run: |
+        cargo build --release
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: mhgu-health-display-fixed
+        path: target/aarch64-unknown-none/release/*.nro
