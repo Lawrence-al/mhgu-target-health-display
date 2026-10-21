@@ -160,7 +160,7 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
     
     let name = if id == 0x47 {
         Text::from_str("黑蚀龙")
-    } else if id == 0x7A {
+    } else if id == 0x48 {
         Text::from_str("混沌黑蚀龙")
     } else {
         let index = unsafe { name_index(id) };
@@ -179,7 +179,7 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
     let canonical_id = unsafe { normalize(read_u32(base + UI_MANAGER), id, 0) };
     let mut species = Text::from_str("Unknown");
 
-    if id == 0x47 || id == 0x7A {
+    if id == 0x47 || id == 0x48 {
         species = Text::from_str("???");
     } else {
         for record in 0..SPECIES_RECORD_COUNT {
