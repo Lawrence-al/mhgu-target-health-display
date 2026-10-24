@@ -1,0 +1,38 @@
+name: Build Switch Plugin
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: aarch64-unknown-none
+
+    - name: Install System Dependencies and ARM Linker
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libssl-dev pkg-config gcc-arm-none-eabi
+
+    - name: Install MHGU Forge CLI Tool
+      run: |
+        cargo install cargo-mhgu-forge
+
+    - name: Build plugin with Forge Packager
+      run: |
+        cargo forge build --release
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: mhgu-health-display-fixed
+        path: |
+          **/*.nro
+          **/*.ipl

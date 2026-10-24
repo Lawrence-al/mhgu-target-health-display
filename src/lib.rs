@@ -151,49 +151,53 @@ unsafe fn loading_visible(base: u32) -> bool {
 
 unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
     let id = unsafe { read_u16(monster + MONSTER_ID) } as u32;
-    let name_index: unsafe extern "C" fn(u32) -> u32 =
-        unsafe { mem::transmute(base + MONSTER_NAME_INDEX) };
-    let message: unsafe extern "C" fn(u32, u32, u32) -> *const c_char =
-        unsafe { mem::transmute(base + GET_MESSAGE) };
-    let normalize: unsafe extern "C" fn(u32, u32, u32) -> u32 =
-        unsafe { mem::transmute(base + NORMALIZE_MONSTER_ID) };
-    let size_and_crown: unsafe extern "C" fn(u32, u32, u32, *mut SizeCrown) =
-        unsafe { mem::transmute(base + SIZE_AND_CROWN) };
+    let name_index: unsafe extern "C" fn(u32) -> u32 = unsafe { mem::transmute(base + MONSTER_NAME_INDEX) };
+    let message: unsafe extern "C" fn(u32, u32, u32) -> *const core::ffi::c_char = unsafe { mem::transmute(base + GET_MESSAGE) };
+    let normalize: unsafe extern "C" fn(u32, u32, u32) -> u32 = unsafe { mem::transmute(base + NORMALIZE_MONSTER_ID) };
+    let size_and_crown: unsafe extern "C" fn(u32, u32, u32, *mut SizeCrown) = unsafe { mem::transmute(base + SIZE_AND_CROWN) };
     let enraged: unsafe extern "C" fn(u32) -> u32 = unsafe { mem::transmute(base + IS_ENRAGED) };
     let names = unsafe { read_u32(base + NAME_MANAGER) };
-    let index = unsafe { name_index(id) };
-    // 文本在任务期间由游戏消息资源持有，立即复制成自有 UTF-8，绘图不保存游戏地址。
-    let name = if index < MONSTER_NAME_COUNT {
-        Text::from_str(
-            unsafe { CStr::from_ptr(message(names, 3, index)) }
-                .to_str()
-                .unwrap_or("Unknown"),
-        )
-    } else {
-        Text::from_str("Unknown")
+    
+    let name = if id == 0x47 {
+        Text::from_str("黑蚀龙")
+    }  else {
+        let index = unsafe { name_index(id) };
+        if index < MONSTER_NAME_COUNT {
+            let msg_ptr = unsafe { message(names, 3, index) };
+            if msg_ptr.is_null() {
+                Text::from_str("Unknown")
+            } else {
+                Text::from_str(unsafe { CStr::from_ptr(msg_ptr) }.to_str().unwrap_or("Unknown"))
+            }
+        } else {
+            Text::from_str("Unknown")
+        }
     };
+
     let canonical_id = unsafe { normalize(read_u32(base + UI_MANAGER), id, 0) };
     let mut species = Text::from_str("Unknown");
-    for record in 0..SPECIES_RECORD_COUNT {
-        let entry = base + SPECIES_RECORDS + record * 16;
-        if unsafe { read_u16(entry + 4) } as u32 == canonical_id {
-            let category = unsafe { read_u8(entry + 6) } as u32;
-            let (resource, key) = if category == 14 {
-                (17, 9)
-            } else {
-                (
-                    3,
-                    unsafe { read_u16(base + SPECIES_MESSAGES + category * 2) } as u32,
-                )
-            };
-            species = Text::from_str(
-                unsafe { CStr::from_ptr(message(names, resource, key)) }
-                    .to_str()
-                    .unwrap_or("Unknown"),
-            );
-            break;
+
+    if id == 0x47 {
+        species = Text::from_str("???");
+    } else {
+        for record in 0..SPECIES_RECORD_COUNT {
+            let entry = base + SPECIES_RECORDS + record * 16;
+            if unsafe { read_u16(entry + 4) } as u32 == canonical_id {
+                let category = unsafe { read_u8(entry + 6) } as u32;
+                let (resource, key) = if category == 14 {
+                    (17, 9)
+                } else {
+                    (3, unsafe { read_u16(base + SPECIES_MESSAGES + category * 2) } as u32)
+                };
+                let msg_ptr = unsafe { message(names, resource, key) };
+                if !msg_ptr.is_null() {
+                    species = Text::from_str(unsafe { CStr::from_ptr(msg_ptr) }.to_str().unwrap_or("Unknown"));
+                }
+                break;
+            }
         }
     }
+
     let scale = f32::from_bits(unsafe { read_u32(work + MONSTER_SCALE) });
     let mut size = SizeCrown {
         crown: 0xFF,
@@ -208,6 +212,7 @@ unsafe fn monster_info(base: u32, monster: u32, work: u32) -> MonsterInfo {
             &mut size,
         )
     };
+
     MonsterInfo {
         name,
         species,
